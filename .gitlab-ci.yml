@@ -2,7 +2,7 @@ stages:
   - test-stage
 
 default:
-  image: openjdk:8-jdk-alpine
+  image: openjdk:11
 
 first-job:
   stage: test-stage
