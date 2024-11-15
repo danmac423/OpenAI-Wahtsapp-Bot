@@ -1,0 +1,9 @@
+stages:
+  - package
+
+default:
+  image: openjdk:8-jdk-alpine
+
+package:
+  script:
+    "./mvnw package"
