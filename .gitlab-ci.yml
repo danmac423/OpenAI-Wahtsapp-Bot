@@ -1,10 +1,11 @@
 stages:
-  - package
+  - test-stage
 
 default:
   image: openjdk:8-jdk-alpine
 
-package:
+first-job:
+  stage: test-stage
   script:
     - "./mvnw package"
   artifacts:
