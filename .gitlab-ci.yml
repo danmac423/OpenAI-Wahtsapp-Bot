@@ -6,4 +6,7 @@ default:
 
 package:
   script:
-    "./mvnw package"
+    - "./mvnw package"
+  artifacts:
+    paths:
+      - "target/"
