@@ -33,11 +33,11 @@
         <repository>
             <id>github</id>
             <name>GitHub WhatsAppBroski Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/bilboaoa/whatsappbroski</url>
+            <url>https://maven.pkg.github.com/Bilboaoa/WhatsAppBroski</url>
         </repository>
         <snapshotRepository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/bilboaoa/whatsappbroski</url>
+            <url>https://maven.pkg.github.com/Bilboaoa/WhatsAppBroski</url>
         </snapshotRepository>
     </distributionManagement>
     <dependencies>
