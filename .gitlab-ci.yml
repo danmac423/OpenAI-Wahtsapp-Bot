@@ -1,0 +1,13 @@
+stages:
+  - test-stage
+
+default:
+  image: openjdk:23
+
+first-job:
+  stage: test-stage
+  script:
+    - "./mvnw package"
+  artifacts:
+    paths:
+      - "target/"
