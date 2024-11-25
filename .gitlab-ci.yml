@@ -37,7 +37,7 @@ dockerize:
   stage: dockerize
   image: docker:latest
   services:
-    - docker:latest-dind
+    - docker-dind
   script:
     - echo "Building Docker Image..."
     - docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest .
