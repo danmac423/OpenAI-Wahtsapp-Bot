@@ -1,5 +1,4 @@
 stages:
-  - setup
   - build
   - test
   - publish
@@ -11,24 +10,12 @@ cache:
   paths:
     - .m2.repository
 
-setup:
-  image: openjdk:17
-  stage: setup
-  script:
-    - echo "Installing Maven..."
-    - apt-get update && apt-get install -y maven
-    - mvn --version
-  artifacts:
-    paths:
-      - /usr/share/maven
-    expire_in: 1 week
-
 build:
   image: openjdk:17
   stage: build
   script:
     - echo "Building Project..."
-    - mvn $MAVEN_CLI_OPTS clean package
+    - ./mvnw $MAVEN_CLI_OPTS clean package
   artifacts:
     paths:
       - target/*.jar
@@ -38,13 +25,13 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - mvn $MAVEN_CLI_OPTS
+    - ./mvnw $MAVEN_CLI_OPTS test
 
 publish_artifacts:
   image: openjdk:17
   stage: publish
   script:
     - echo "Publishing artifacts..."
-    - mvn $MAVEN_CLI_OPTS deploy
+    - ./mvnw $MAVEN_CLI_OPTS deploy
   dependencies:
     - test
