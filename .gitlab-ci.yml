@@ -13,7 +13,7 @@ cache:
     - .m2.repository
 
 build:
-  image: maven:3.9.5-eclipse-temruin-17
+  image: openjdk:17
   stage: build
   script:
     - echo "Building Project..."
@@ -23,14 +23,14 @@ build:
       - target/*.jar
 
 test:
-  image: maven:3.9.5-eclipse-temruin-17
+  image: openjdk:17
   stage: test
   script:
     - echo "Running tests..."
     - mvn $MAVEN_CLI_OPTS
 
 publish_artifacts:
-  image: maven:3.9.5-eclipse-temruin-17
+  image: openjdk:17
   stage: publish
   script:
     - echo "Publishing artifacts..."
