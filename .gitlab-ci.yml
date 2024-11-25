@@ -42,9 +42,9 @@ dockerize:
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
   script:
     - echo "Building Docker image..."
-    - docker build -t $DOCKERHUB_USERNAME/whastappbroski:latest .
+    - docker build -t $DOCKERHUB_USERNAME/whatsappbroski:latest .
     - echo "Pushing image to DockerHub"
-    - docker push $DOCKERHUB_USERNAME/whastappbroski:latest
+    - docker push $DOCKERHUB_USERNAME/whatsappbroski:latest
   dependencies:
     - build
 
