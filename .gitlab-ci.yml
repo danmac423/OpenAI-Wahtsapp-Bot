@@ -1,6 +1,7 @@
 stages:
   - build
   - publish
+  - dockerize
 
 variables:
   MAVEN_CLI_OPTS: "-s settings.xml -B"
@@ -11,7 +12,7 @@ default:
 cache:
   key: shared-m2-repo
   paths:
-    - .m2/repository
+    - /root/.m2/repository
   policy: pull-push
 
 build:
@@ -31,3 +32,18 @@ publish_artifacts:
     - mvn $MAVEN_CLI_OPTS deploy -DskipTests
   dependencies:
     - build
+
+dockerize:
+  stage: dockerize
+  image: docker:latest
+  services:
+    docker:latest-dind
+  script:
+    - echo "Building Docker Image..."
+    - docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest .
+    - echo "Pushing to DockerHub..."
+    - echo $DOCKERHUB_TOKEN | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
+  dependencies:
+    - publish artifacts
+  
