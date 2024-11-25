@@ -1,4 +1,5 @@
 stages:
+  - setup
   - build
   - test
   - publish
@@ -11,6 +12,20 @@ variables:
 cache:
   paths:
     - .m2.repository
+
+setup:
+  image: openjdk:17
+  stage: setup
+  script:
+    - echo "Installing Maven..."
+    - apt-get update && apt-get install -y maven
+    - mvn --version
+  artifacts:
+    paths:
+      - /usr/share/maven
+    expire_in: 1 week
+  only:
+    - main
 
 build:
   image: openjdk:17
