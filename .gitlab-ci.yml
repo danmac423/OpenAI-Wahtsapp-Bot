@@ -39,7 +39,7 @@ dockerize:
   services:
     - docker:dind
   before_script:
-    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin registry.hub.docker.com
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
   script:
     - echo "Building Docker image..."
     - docker build -t $DOCKERHUB_USERNAME/whastappbroski:latest .
