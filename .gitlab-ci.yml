@@ -1,39 +1,33 @@
 stages:
   - build
-  - test
   - publish
 
 variables:
-  MAVEN_CLI_OPTS: "-s settings.xml -B -DskipTests"
+  MAVEN_CLI_OPTS: "-s settings.xml -B"
+
+default:
+  image: maven:3.8.5-openjdk-17
 
 cache:
+  key: shared-m2-repo
   paths:
     - .m2/repository
+  policy: pull-push
 
 build:
-  image: openjdk:17
   stage: build
   script:
-    - echo "Building Project..."
-    - ./mvnw $MAVEN_CLI_OPTS clean package
+    - echo "Building and Testing project..."
+    - mvn $MAVEN_CLI_OPTS clean install
   artifacts:
     paths:
       - target/*.jar
 
-test:
-  image: openjdk:17
-  stage: test
-  script:
-    - echo "Running tests..."
-    - ./mvnw test
-  dependencies:
-    - build
 
 publish_artifacts:
-  image: openjdk:17
   stage: publish
   script:
     - echo "Publishing artifacts..."
-    - ./mvnw $MAVEN_CLI_OPTS deploy
+    - mvn $MAVEN_CLI_OPTS deploy -DskipTests
   dependencies:
-    - test
+    - build
