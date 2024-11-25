@@ -35,15 +35,19 @@ publish_artifacts:
 
 dockerize:
   stage: dockerize
-  image: docker:20.10.24
+  image: docker:latest
   services:
-    - docker:20.10.24-dind
+    - docker:dind
+  before_script:
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN" registry.hub.docker.com
   script:
-    - echo "Building Docker Image..."
-    - docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest .
-    - echo "Pushing to DockerHub..."
-    - echo $DOCKERHUB_TOKEN | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-    - docker push $DOCKERHUB_USERNAME/$DOCKERHUB_REPO:latest
+    - echo "Building Docker image..."
+    - docker build -t whastappbroski:latest
+    - echo "Pushing image to DockerHub"
+    - docker push "$DOCKERHUB_USERNAME/whatsappbroski:latest"
+  dependencies:
+    - build
+
   dependencies:
     - publish_artifacts
   
