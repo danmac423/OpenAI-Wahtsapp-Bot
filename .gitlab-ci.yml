@@ -4,11 +4,11 @@ stages:
   - publish
 
 variables:
-  MAVEN_CLI_OPTS: "-s settings.xml -B"
+  MAVEN_CLI_OPTS: "-s settings.xml -B -DskipTests"
 
 cache:
   paths:
-    - .m2.repository
+    - .m2/repository
 
 build:
   image: openjdk:17
@@ -25,7 +25,9 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - ./mvnw $MAVEN_CLI_OPTS test
+    - ./mvnw test
+  dependencies:
+    - build
 
 publish_artifacts:
   image: openjdk:17
