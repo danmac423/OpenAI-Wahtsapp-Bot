@@ -1,13 +1,39 @@
 stages:
-  - test-stage
+  - build
+  - test
+  - publish
+  - dockerize
+  - deploy
 
-default:
-  image: openjdk:23
+variables:
+  MAVEN_CLI_OPTS: "-s settings.xml -B"
 
-first-job:
-  stage: test-stage
+cache:
+  paths:
+    - .m2.repository
+
+build:
+  image: maven:3.9.5-eclipse-temruin-17
+  stage: build
   script:
-    - "./mvnw package"
+    - echo "Building Project..."
+    - mvn $MAVEN_CLI_OPTS clean package
   artifacts:
     paths:
-      - "target/"
+      - target/*.jar
+
+test:
+  image: maven:3.9.5-eclipse-temruin-17
+  stage: test
+  script:
+    - echo "Running tests..."
+    - mvn $MAVEN_CLI_OPTS
+
+publish_artifacts:
+  image: maven:3.9.5-eclipse-temruin-17
+  stage: publish
+  script:
+    - echo "Publishing artifacts..."
+    - mvn $MAVEN_CLI_OPTS deploy
+  dependencies:
+    - test
