@@ -3,8 +3,6 @@ stages:
   - build
   - test
   - publish
-  - dockerize
-  - deploy
 
 variables:
   MAVEN_CLI_OPTS: "-s settings.xml -B"
@@ -24,8 +22,6 @@ setup:
     paths:
       - /usr/share/maven
     expire_in: 1 week
-  only:
-    - main
 
 build:
   image: openjdk:17
