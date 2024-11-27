@@ -15,11 +15,11 @@ else
     echo "Kontener '${CONTAINER_NAME}' nie działa."
 fi
 
-DOCKER_USERNAME=$1
-DOCKER_TOKEN=$2
+DOCKERHUB_USERNAME=$1
+DOCKERHUB_TOKEN=$2
 
 set -ex
 
-docker login docker.io "$DOCKER_USERNAME" --password "$DOCKER_TOKEN"
+echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
 docker pull msj102/whatsappbroski:latest
-docker run -d -p "8080:8080" --name "$CONTAINER_NAME" --rm msj102/whatsappbroski
+docker run -d -p "8080:8080" --name $CONTAINER_NAME --rm msj102/whatsappbroski
