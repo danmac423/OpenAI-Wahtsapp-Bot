@@ -36,10 +36,12 @@ publish_artifacts:
 
 dockerize:
   stage: dockerize
-  image: docker:latest
+  image: alpine:latest
   services:
     - docker:dind
   before_script:
+    - apk update
+    - apk add docker jq curl
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
     - sh scripts/download_artifact.sh $GITHUB_TOKEN
   script:
