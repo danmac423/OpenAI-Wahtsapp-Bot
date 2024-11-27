@@ -2,7 +2,11 @@ FROM openjdk:17
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+ARG GITHUB_TOKEN
+
+COPY scripts/download_artifact.sh run.sh
+
+CMD sh run.sh $GITHUB_TOKEN
 
 EXPOSE 8080
 
