@@ -56,10 +56,10 @@ deploy:
     - apk update
     - apk add openssh bash
   script:
-    - mkdir -p keys
-    - echo "${AZURE_PRIVATE_KEY}" >> keys/vm_private_key.pem
-    - chmod 400 keys/vm_private_key.pem
-    - ssh-keyscan -H 4.180.122.198 >> ~/.ssh/known_hosts
-    - ssh -i keys/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
+    - mkdir /root/.ssh
+    - echo "${AZURE_PRIVATE_KEY}" >> /root/.ssh/vm_private_key.pem
+    - chmod 400 /root/.ssh/vm_private_key.pem
+    - ssh-keyscan -H 4.180.122.198 >> /root/.ssh/known_hosts
+    - ssh -i /root/.ssh/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
 
   
