@@ -41,6 +41,7 @@ dockerize:
     - docker:dind
   before_script:
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
+    - sh scripts/download_artifact.sh $GITHUB_TOKEN
   script:
     - echo "Building Docker image..."
     - docker build -t $DOCKERHUB_USERNAME/whatsappbroski:latest .
