@@ -2,6 +2,7 @@ stages:
   - build
   - publish
   - dockerize
+  - deploy
 
 variables:
   MAVEN_CLI_OPTS: "-s settings.xml -B"
@@ -47,5 +48,12 @@ dockerize:
     - docker push $DOCKERHUB_USERNAME/whatsappbroski:latest
   dependencies:
     - build
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  script:
+    echo "$AZURE_PRIVATE_KEY" >> ~/.ssh/vm_private_key.pem
+    ssh -i ~/.ssh/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
 
   
