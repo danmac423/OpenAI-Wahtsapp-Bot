@@ -53,12 +53,13 @@ deploy:
   stage: deploy
   image: alpine:latest
   before_script:
-    - "apk update"
-    - "apk add openssh"
+    - apk update
+    - apk add openssh bash
   script:
-    - mkdir keys
+    - mkdir -p keys
     - echo "${AZURE_PRIVATE_KEY}" >> keys/vm_private_key.pem
     - chmod 400 keys/vm_private_key.pem
+    - ssh-keyscan -H 4.180.122.198 >> ~/.ssh/known_hosts
     - ssh -i keys/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
 
   
