@@ -10,8 +10,7 @@ CONTAINER_NAME="whatsappbroski-app"
 if docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     echo "Kontener '${CONTAINER_NAME}' działa. Zatrzymuję..."
     docker stop "${CONTAINER_NAME}"
-    docker rm "$CONTAINER_NAME"
-    echo "Kontener '${CONTAINER_NAME}' został zatrzymany i usunięty."
+    echo "Kontener '${CONTAINER_NAME}' został zatrzymany."
 else
     echo "Kontener '${CONTAINER_NAME}' nie działa."
 fi

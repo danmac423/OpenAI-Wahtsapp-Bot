@@ -57,7 +57,7 @@ deploy:
     - "apk add openssh"
   script:
     - mkdir keys
-    - echo "$AZURE_PRIVATE_KEY" >> keys/vm_private_key.pem
+    - echo "${AZURE_PRIVATE_KEY}" >> keys/vm_private_key.pem
     - chmod 400 keys/vm_private_key.pem
     - ssh -i keys/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
 
