@@ -7,7 +7,5 @@ VERSION=$(curl -L \
         https://api.github.com/user/packages/maven/whatsappbroski.whatsappbroski/versions | \
         jq -r '.[] | select(.name | test("SNAPSHOT") | not) | .name' | sort -V | tail -n1)
 
-curl -L \
-  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-  -o app.jar \
-  "https://maven.pkg.github.com/whatsappbroski/whatsappbroski/whatsappbroski/whatsappbroski/$VERSION/whatsappbroski-$VERSION.jar"
+curl "https://maven.pkg.github.com/Bilboaoa/whatsappbroski/whatsappbroski.whatsappbroski/${VERSION}/whatsappbroski-${VERSION}.jar" \
+  -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "app.jar"
