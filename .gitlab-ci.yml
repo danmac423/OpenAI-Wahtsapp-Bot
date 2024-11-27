@@ -53,8 +53,9 @@ deploy:
   stage: deploy
   image: alpine:latest
   script:
-    mkdir keys
-    echo "$AZURE_PRIVATE_KEY" >> keys/vm_private_key.pem
-    ssh -i keys/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
+    - mkdir keys
+    - echo "$AZURE_PRIVATE_KEY" >> keys/vm_private_key.pem
+    - sudo chmod 600 keys/vm_private_key.pem
+    - ssh -i keys/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
 
   
