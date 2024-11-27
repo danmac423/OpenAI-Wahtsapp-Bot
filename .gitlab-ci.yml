@@ -36,15 +36,17 @@ publish_artifacts:
 
 dockerize:
   stage: dockerize
-  image: alpine:latest
+  image: 27.3.1-dind-alpine3.20
   services:
     - docker:dind
   before_script:
     - apk update
-    - apk add docker jq curl
-    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
-    - sh scripts/download_artifact.sh $GITHUB_TOKEN
+    - apk add jq curl
   script:
+    - echo "Logging in..."
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
+    - echo "Downloading .jar file..."
+    - sh scripts/download_artifact.sh $GITHUB_TOKEN
     - echo "Building Docker image..."
     - docker build -t $DOCKERHUB_USERNAME/whatsappbroski:latest .
     - echo "Pushing image to DockerHub"
