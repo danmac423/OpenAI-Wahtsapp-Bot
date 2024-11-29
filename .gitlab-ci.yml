@@ -36,19 +36,22 @@ publish_artifacts:
 
 dockerize:
   stage: dockerize
-  image: docker:latest
-  services:
-    - docker:dind
+  image:
+    name: alpine:latest
+    entrypoint: [""]
   before_script:
-    - apt-get update
-    - apt-get -y install curl jq
+    - apk add --no-cache curl jq docker-cli
   script:
+    - echo "Downloading .jar file..."
+    - chmod +x scripts/download_artifact.sh
+    - ./scripts/download_artifact.sh $GITHUB_TOKEN
+
     - echo "Logging in..."
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
-    - echo "Downloading .jar file..."
-    - sh scripts/download_artifact.sh $GITHUB_TOKEN
+
     - echo "Building Docker image..."
     - docker build -t $DOCKERHUB_USERNAME/whatsappbroski:latest .
+
     - echo "Pushing image to DockerHub"
     - docker push $DOCKERHUB_USERNAME/whatsappbroski:latest
   dependencies:
