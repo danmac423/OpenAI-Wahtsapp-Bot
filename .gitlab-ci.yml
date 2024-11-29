@@ -36,11 +36,11 @@ publish_artifacts:
 
 dockerize:
   stage: dockerize
-  image:
-    name: alpine:latest
-    entrypoint: [""]
+  image: docker:latest
+  services:
+    - docker:dind
   before_script:
-    - apk add --no-cache curl jq docker-cli
+    - apk add --no-cache curl jq
   script:
     - echo "Downloading .jar file..."
     - chmod +x scripts/download_artifact.sh
@@ -59,7 +59,7 @@ dockerize:
 
 deploy:
   stage: deploy
-  image: alpine:latest
+  image: alpin:latest
   before_script:
     - apk update
     - apk add openssh bash
