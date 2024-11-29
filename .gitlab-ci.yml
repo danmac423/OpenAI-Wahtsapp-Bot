@@ -59,7 +59,7 @@ dockerize:
 
 deploy:
   stage: deploy
-  image: alpin:latest
+  image: alpine:latest
   before_script:
     - apk update
     - apk add openssh bash
