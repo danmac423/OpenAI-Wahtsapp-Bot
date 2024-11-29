@@ -36,12 +36,12 @@ publish_artifacts:
 
 dockerize:
   stage: dockerize
-  image: 27.3.1-dind-alpine3.20
+  image: docker:latest
   services:
     - docker:dind
   before_script:
-    - apk update
-    - apk add jq curl
+    - apt-get update
+    - apt-get -y install curl jq
   script:
     - echo "Logging in..."
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
