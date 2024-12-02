@@ -10,7 +10,7 @@
     </parent>
     <groupId>whatsappbroski</groupId>
     <artifactId>whatsappbroski</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
     <name>WhatsAppBroski</name>
     <description>WhatsAppBroski</description>
     <url/>
@@ -37,6 +37,7 @@
         </repository>
         <snapshotRepository>
             <id>github</id>
+            <name>Github Packages</name>
             <url>https://maven.pkg.github.com/Bilboaoa/WhatsAppBroski</url>
         </snapshotRepository>
     </distributionManagement>
