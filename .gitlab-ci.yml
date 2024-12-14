@@ -8,7 +8,7 @@ variables:
   MAVEN_CLI_OPTS: "-s settings.xml -B"
 
 default:
-  image: maven:3.9.5-openjdk-21
+  image: maven:3.9.9-eclipse-temurin-21
 
 cache:
   key: shared-m2-repo
