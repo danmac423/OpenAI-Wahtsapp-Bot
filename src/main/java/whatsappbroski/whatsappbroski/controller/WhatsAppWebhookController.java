@@ -1,69 +1,61 @@
 package whatsappbroski.whatsappbroski.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import whatsappbroski.whatsappbroski.service.WhatsAppService;
-
-import java.util.List;
-import java.util.Map;
+import whatsappbroski.whatsappbroski.dto.WebhookPayloadDTO;
+import whatsappbroski.whatsappbroski.service.whatsapp.WhatsAppMessageService;
+import whatsappbroski.whatsappbroski.service.whatsapp.WhatsAppStatusService;
 
 @RestController
 @RequestMapping("/webhook")
 public class WhatsAppWebhookController {
 
-    private final WhatsAppService whatsAppService;
+    private final WhatsAppMessageService whatsAppMessageService;
+    private final WhatsAppStatusService whatsAppStatusService;
+
+    private final Logger logger = LoggerFactory.getLogger(WhatsAppWebhookController.class);
 
     @Value("${whatsapp.api.webhook.token}")
     String verifyToken;
 
-    public WhatsAppWebhookController(WhatsAppService whatsAppService) {
-        this.whatsAppService = whatsAppService;
+    public WhatsAppWebhookController(WhatsAppMessageService whatsAppMessageService, WhatsAppStatusService whatsAppStatusService) {
+        this.whatsAppMessageService = whatsAppMessageService;
+        this.whatsAppStatusService = whatsAppStatusService;
     }
 
     @PostMapping
-    public ResponseEntity<String> receiveMessage(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> receiveMessage(@RequestBody WebhookPayloadDTO payload) {
         try {
-            // Logowanie payload dla debugowania
-            System.out.println("Otrzymano payload: " + payload);
+            logger.info("Received payload: {}", payload);
 
-            // Pobranie pierwszego wpisu z listy "entry"
-            var entries = (List<Map<String, Object>>) payload.get("entry");
+            var entries = payload.getEntry();
             if (entries == null || entries.isEmpty()) {
                 return ResponseEntity.ok("No entries found");
             }
 
-            // Pobranie zmian z wpisu
-            var changes = (List<Map<String, Object>>) entries.get(0).get("changes");
-            if (changes == null || changes.isEmpty()) {
-                return ResponseEntity.ok("No changes found");
-            }
+            entries.forEach(entry -> entry.getChanges().forEach(change -> {
+                var value = change.getValue();
 
-            // Pobranie wiadomości z "value"
-            var value = (Map<String, Object>) changes.get(0).get("value");
-            var messages = (List<Map<String, Object>>) value.get("messages");
-            if (messages == null || messages.isEmpty()) {
-                return ResponseEntity.ok("No messages found");
-            }
+                if (value.getMessages() != null && !value.getMessages().isEmpty()) {
+                    value.getMessages().forEach(whatsAppMessageService::handleIncomingMessage);
+                }
 
-            // Pobranie nadawcy i treści wiadomości
-            var message = messages.get(0);
-            String from = (String) message.get("from"); // Numer telefonu nadawcy
-            String body = (String) ((Map<String, Object>) message.get("text")).get("body"); // Treść wiadomości
-
-            System.out.println("Wiadomość od: " + from + ", Treść: " + body);
-
-            // Wysłanie odpowiedzi: odsyłamy tę samą wiadomość
-            whatsAppService.sendMessage(from, "Otrzymałem Twoją wiadomość: " + body);
-
+                if (value.getStatuses() != null && !value.getStatuses().isEmpty()) {
+                    value.getStatuses().forEach(whatsAppStatusService::handleMessageStatus);
+                }
+            }));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error processing webhook payload", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing webhook");
         }
 
         return ResponseEntity.ok("EVENT_RECEIVED");
     }
+
 
     @GetMapping
     public ResponseEntity<String> verifyWebhook(
