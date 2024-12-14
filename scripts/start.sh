@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# check for JDK 17
-if ! command -v java &> /dev/null || ! java --version 2>&1 | grep -q "17\." ; then
-    echo "Java JDK 17 is not installed. Installing..."
+# check for JDK 21
+if ! command -v java &> /dev/null || ! java --version 2>&1 | grep -q "21\." ; then
+    echo "Java JDK 21 is not installed. Installing..."
 
     sudo apt update
-    sudo apt install -y openjdk-17-jdk
+    sudo apt install -y openjdk-21-jdk
 fi
 
 # check for Maven
