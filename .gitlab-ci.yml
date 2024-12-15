@@ -33,8 +33,8 @@ publish_artifacts:
     - mvn $MAVEN_CLI_OPTS deploy -DskipTests
   dependencies:
     - build
-#  only:
-#    - main
+  only:
+    - main
 
 dockerize:
   stage: dockerize
@@ -58,8 +58,8 @@ dockerize:
     - docker push $DOCKERHUB_USERNAME/whatsappbroski:latest
   dependencies:
     - publish_artifacts
-#  only:
-#    - main
+  only:
+    - main
 
 deploy:
   stage: deploy
@@ -75,7 +75,5 @@ deploy:
     - ssh -i /root/.ssh/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < scripts/deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN $WHATSAPP_API_URL $WHATSAPP_API_TOKEN $WHATSAPP_API_WEBHOOK_TOKEN
   dependencies:
     - dockerize
-#  only:
-#    - main
-
-  
+  only:
+    - main
