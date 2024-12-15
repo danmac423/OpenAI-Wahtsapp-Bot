@@ -8,7 +8,7 @@ variables:
   MAVEN_CLI_OPTS: "-s settings.xml -B"
 
 default:
-  image: maven:3.8.5-openjdk-17
+  image: maven:3.9.9-eclipse-temurin-21
 
 cache:
   key: shared-m2-repo
@@ -72,10 +72,8 @@ deploy:
     - echo "${AZURE_PRIVATE_KEY}" >> /root/.ssh/vm_private_key.pem
     - chmod 400 /root/.ssh/vm_private_key.pem
     - ssh-keyscan -H 4.180.122.198 >> /root/.ssh/known_hosts
-    - ssh -i /root/.ssh/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < scripts/deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN
+    - ssh -i /root/.ssh/vm_private_key.pem azureuser@4.180.122.198 'bash -s' < scripts/deploy.sh $DOCKERHUB_USERNAME $DOCKERHUB_TOKEN $WHATSAPP_API_URL $WHATSAPP_API_TOKEN $WHATSAPP_API_WEBHOOK_TOKEN
   dependencies:
     - dockerize
   only:
     - main
-
-  
