@@ -5,7 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import whatsappbroski.whatsappbroski.dto.WebhookPayloadDTO;
+import whatsappbroski.whatsappbroski.dto.whatsapp.WebhookPayloadDTO;
+import whatsappbroski.whatsappbroski.service.openai.OpenAIService;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,28 +20,31 @@ import java.util.Map;
 @Service
 public class WhatsAppMessageService {
 
+    private final Logger logger = LoggerFactory.getLogger(WhatsAppMessageService.class);
+    private final OpenAIService openAIService;
+
     @Value("${whatsapp.api.url}")
     private String whatsappApiUrl;
 
     @Value("${whatsapp.api.token}")
     private String token;
 
-    private final Logger logger = LoggerFactory.getLogger(WhatsAppMessageService.class);
-    private final ObjectMapper objectMapper;
-    private final HttpClient httpClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    public WhatsAppMessageService() {
-        this.objectMapper = new ObjectMapper();
-        this.httpClient = HttpClient.newHttpClient();
+    public WhatsAppMessageService(OpenAIService openAIService) {
+        this.openAIService = openAIService;
     }
-
 
     public void handleIncomingMessage(WebhookPayloadDTO.Message message) {
         String from = message.getFrom();
         String body = message.getText().getBody();
 
-        logger.info("Message received from: {}, body: {}", from, body);
-        sendMessage(from, "Received Your message: " + body);
+        logger.info("Message received from WhatsApp: from={}, body={}", from, body);
+
+        String openAIResponse = openAIService.getOpenAIResponse(body);
+
+        sendMessage(from, openAIResponse);
     }
 
 
@@ -67,6 +71,8 @@ public class WhatsAppMessageService {
 
     public void sendMessage(String to, String message) {
         try {
+            logger.info("Sending message to WhatsApp: to={}, message={}", to, message);
+
             String requestBody = createMessageRequestBody(to, message);
 
             HttpRequest request = HttpRequest.newBuilder()
