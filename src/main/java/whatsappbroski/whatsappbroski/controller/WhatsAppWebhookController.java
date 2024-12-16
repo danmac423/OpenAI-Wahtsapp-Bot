@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import whatsappbroski.whatsappbroski.dto.WebhookPayloadDTO;
+import whatsappbroski.whatsappbroski.dto.whatsapp.WebhookPayloadDTO;
 import whatsappbroski.whatsappbroski.service.whatsapp.WhatsAppMessageService;
 import whatsappbroski.whatsappbroski.service.whatsapp.WhatsAppStatusService;
 
@@ -68,4 +68,5 @@ public class WhatsAppWebhookController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
+
 }
