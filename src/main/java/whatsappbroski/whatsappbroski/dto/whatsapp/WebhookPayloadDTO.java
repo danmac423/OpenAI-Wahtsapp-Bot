@@ -1,4 +1,4 @@
-package whatsappbroski.whatsappbroski.dto;
+package whatsappbroski.whatsappbroski.dto.whatsapp;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
