@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import whatsappbroski.whatsappbroski.dto.whatsapp.WebhookPayloadDTO;
-import whatsappbroski.whatsappbroski.service.openai.OpenAIService;
 import whatsappbroski.whatsappbroski.service.whatsapp.WhatsAppMessageService;
 import whatsappbroski.whatsappbroski.service.whatsapp.WhatsAppStatusService;
 
@@ -18,17 +17,14 @@ public class WhatsAppWebhookController {
     private final WhatsAppMessageService whatsAppMessageService;
     private final WhatsAppStatusService whatsAppStatusService;
 
-    private final OpenAIService openAIService;
-
     private final Logger logger = LoggerFactory.getLogger(WhatsAppWebhookController.class);
 
     @Value("${whatsapp.api.webhook.token}")
     String verifyToken;
 
-    public WhatsAppWebhookController(WhatsAppMessageService whatsAppMessageService, WhatsAppStatusService whatsAppStatusService, OpenAIService  openAIService) {
+    public WhatsAppWebhookController(WhatsAppMessageService whatsAppMessageService, WhatsAppStatusService whatsAppStatusService) {
         this.whatsAppMessageService = whatsAppMessageService;
         this.whatsAppStatusService = whatsAppStatusService;
-        this.openAIService = openAIService;
     }
 
     @PostMapping
@@ -73,10 +69,4 @@ public class WhatsAppWebhookController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-//    @PostMapping("/message")
-//    public ResponseEntity<String> sendMessageToChat(@RequestBody String message) {;
-//        String openAIResponse = openAIService.getOpenAIResponse(message);
-//        System.out.println(openAIResponse);
-//        return ResponseEntity.ok(openAIResponse);
-//    }
 }

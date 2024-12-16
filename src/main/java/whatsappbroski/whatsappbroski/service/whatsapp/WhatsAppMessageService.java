@@ -20,14 +20,16 @@ import java.util.Map;
 @Service
 public class WhatsAppMessageService {
 
-    private final Logger logger = LoggerFactory.getLogger(WhatsAppMessageService.class);
-    private final OpenAIService openAIService;
 
     @Value("${whatsapp.api.url}")
     private String whatsappApiUrl;
 
     @Value("${whatsapp.api.token}")
     private String token;
+
+    private final Logger logger = LoggerFactory.getLogger(WhatsAppMessageService.class);
+
+    private final OpenAIService openAIService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
