@@ -44,7 +44,7 @@ public class WhatsAppMessageService {
 
         logger.info("Message received from WhatsApp: from={}, body={}", from, body);
 
-        String openAIResponse = openAIService.getOpenAIResponse(body);
+        String openAIResponse = openAIService.getOpenAIResponse(from, body);
 
         sendMessage(from, openAIResponse);
     }
