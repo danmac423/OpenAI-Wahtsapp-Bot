@@ -1,82 +1,53 @@
 package whatsappbroski.whatsappbroski.service.openai;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import whatsappbroski.whatsappbroski.dto.openai.ChatGPTRequestDTO;
-import whatsappbroski.whatsappbroski.dto.openai.ChatGPTResponseDTO;
-import whatsappbroski.whatsappbroski.service.whatsapp.WhatsAppMessageService;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.List;
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
 
 @Service
 public class OpenAIService {
-    @Value("${openai.api.model}")
-    private String model;
 
-    @Value("${openai.api.url}")
-    private String url;
+    @Value("${openai.memory.window.size}")
+    private int memoryWindowSize;
 
-    @Value("${openai.api.key}")
-    private String apiKey;
+    private final ChatClient chatClient;
+    private final ChatMemory chatMemory;
 
-    private final Logger logger = LoggerFactory.getLogger(WhatsAppMessageService.class);
+    private final Logger logger = LoggerFactory.getLogger(OpenAIService.class);
 
-    private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    public OpenAIService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory) {
+        this.chatClient = chatClientBuilder.defaultAdvisors(new MessageChatMemoryAdvisor(chatMemory)).build();
+        this.chatMemory = chatMemory;
+    }
 
-    public String getOpenAIResponse(String prompt) {
-        ChatGPTRequestDTO.Content content = ChatGPTRequestDTO.Content.builder()
-                .type("text")
-                .text(prompt)
-                .build();
+    public String getOpenAIResponse(String chatId, String prompt) {
 
-        ChatGPTRequestDTO.Message message = ChatGPTRequestDTO.Message.builder()
-                .role("user")
-                .content(List.of(content))
-                .build();
+        long startTime = System.currentTimeMillis();
 
-        ChatGPTRequestDTO chatGPTRequest = ChatGPTRequestDTO.builder()
-                .model(model)
-                .messages(List.of(message))
-                .build();
+        String response = this.chatClient
+                .prompt()
+                .user(prompt)
+                .advisors(a -> a
+                        .param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, memoryWindowSize)
+                )
+                .call()
+                .content();
+        long duration = System.currentTimeMillis() - startTime;
+        logger.info("Received response from OpenAI in {} ms", duration);
+        logger.debug("OpenAI response content: {}", response);
 
-        try {
-            logger.info("Preparing request to OpenAI API. URL: {}", url);
+        return response;
+    }
 
-            String requestBody = objectMapper.writeValueAsString(chatGPTRequest);
-            logger.debug("Request body: {}", requestBody);
-
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(url))
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + apiKey)
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
-
-            long startTime = System.currentTimeMillis();
-            logger.info("Sending request to OpenAI...");
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            long duration = System.currentTimeMillis() - startTime;
-
-            logger.info("Received response from OpenAI in {} ms", duration);
-            logger.debug("Response body: {}", response.body());
-
-            ChatGPTResponseDTO chatGPTResponse = objectMapper.readValue(response.body(), ChatGPTResponseDTO.class);
-
-            String result = chatGPTResponse.getChoices().getFirst().getMessage().getContent();
-            logger.info("OpenAI response content: {}", result);
-
-            return result;
-        } catch (Exception e) {
-            logger.error("Error while communicating with OpenAI", e);
-            throw new RuntimeException("Error while communicating with OpenAI", e);
-        }
+    public void clearChatMemory(String chatId) {
+        chatMemory.clear(chatId);
     }
 }

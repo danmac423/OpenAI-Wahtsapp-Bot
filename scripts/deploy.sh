@@ -1,9 +1,6 @@
 #!/bin/bash
-openai.api.model=${OPENAI_API_MODEL}
-openai.api.url=${OPENAI_API_URL}
-openai.api.key=${OPENAI_API_KEY}
-if [ $# -ne 8 ]; then
-      echo "Usage: $0 <docker-username> <docker-token> <whatsapp-api-ul> <whatsapp-api-token> <whatsapp-api-webhook-token> <openai-api-model> <openai-api-url> <openai-api-key>"
+if [ $# -ne 7 ]; then
+      echo "Usage: $0 <docker-username> <docker-token> <whatsapp-api-ul> <whatsapp-api-token> <whatsapp-api-webhook-token> <openai-api-model> <openai-api-key>"
       exit 1
   fi
 
@@ -23,8 +20,7 @@ WHATSAPP_API_URL=$3
 WHATSAPP_API_TOKEN=$4
 WHATSAPP_API_WEBHOOK_TOKEN=$5
 OPENAI_API_MODEL=$6
-OPENAI_API_URL=$7
-OPENAI_API_KEY=$8
+OPENAI_API_KEY=$7
 
 set -ex
 
@@ -35,6 +31,5 @@ docker run -d  \
   -e WHATSAPP_API_TOKEN="${WHATSAPP_API_TOKEN}" \
   -e WHATSAPP_API_WEBHOOK_TOKEN="${WHATSAPP_API_WEBHOOK_TOKEN}" \
   -e OPENAI_API_MODEL="${OPENAI_API_MODEL}" \
-  -e OPENAI_API_URL="${OPENAI_API_URL}" \
   -e OPENAI_API_KEY="${OPENAI_API_KEY}" \
   -p "8080:8080" --name $CONTAINER_NAME --rm msj102/whatsappbroski
