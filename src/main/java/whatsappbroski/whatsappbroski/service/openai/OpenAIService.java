@@ -13,11 +13,13 @@ import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvis
 public class OpenAIService {
 
     private final ChatClient chatClient;
+    private final ChatMemory chatMemory;
 
     private final Logger logger = LoggerFactory.getLogger(OpenAIService.class);
 
     public OpenAIService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory) {
         this.chatClient = chatClientBuilder.defaultAdvisors(new MessageChatMemoryAdvisor(chatMemory)).build();
+        this.chatMemory = chatMemory;
     }
 
     public String getOpenAIResponse(String chatId, String prompt) {
@@ -37,5 +39,9 @@ public class OpenAIService {
         logger.debug("OpenAI response content: {}", response);
 
         return response;
+    }
+
+    public void clearChatMemory(String chatId) {
+        chatMemory.clear(chatId);
     }
 }

@@ -44,8 +44,14 @@ public class WhatsAppMessageService {
 
         logger.info("Message received from WhatsApp: from={}, body={}", from, body);
 
-        String openAIResponse = openAIService.getOpenAIResponse(from, body);
+        if (body.strip().equals("/clear")) {
+            sendMessage(from, "Clearing chat history...");
+            openAIService.clearChatMemory(from);
+            return;
+        }
 
+
+        String openAIResponse = openAIService.getOpenAIResponse(from, body);
         sendMessage(from, openAIResponse);
     }
 
@@ -77,12 +83,7 @@ public class WhatsAppMessageService {
 
             String requestBody = createMessageRequestBody(to, message);
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(whatsappApiUrl))
-                    .header("Authorization", "Bearer " + token)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
+            HttpRequest request = HttpRequest.newBuilder().uri(new URI(whatsappApiUrl)).header("Authorization", "Bearer " + token).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(requestBody)).build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
